@@ -10,8 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -175,13 +175,13 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
             promise.reject(EVENT_BLUETOOTH_NOT_SUPPORT);
         }else {
             cancelDisCovery();
-            int permissionChecked = ContextCompat.checkSelfPermission(reactContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-            if (permissionChecked == PackageManager.PERMISSION_DENIED) {
-                // // TODO: 2018/9/21
-                ActivityCompat.requestPermissions(reactContext.getCurrentActivity(),
-                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                        1);
-            }
+//            int permissionChecked = ContextCompat.checkSelfPermission(reactContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+//            if (permissionChecked == PackageManager.PERMISSION_DENIED) {
+//                // // TODO: 2018/9/21
+//                ActivityCompat.requestPermissions(reactContext.getCurrentActivity(),
+//                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+//                        1);
+//            }
 
 
             pairedDeivce = new JSONArray();
@@ -222,6 +222,23 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
         }
 
     }
+
+    @ReactMethod
+    public void disconnect(String address, final Promise promise){
+        BluetoothAdapter adapter = this.getBluetoothAdapter();
+        if (adapter!=null && adapter.isEnabled()) {
+            BluetoothDevice device = adapter.getRemoteDevice(address);
+            try {
+                mService.stop();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+            promise.resolve(address);
+        } else {
+            promise.reject("BT NOT ENABLED");
+        }
+
+	}
 
     @ReactMethod
     public void unpaire(String address,final Promise promise){
